@@ -2,7 +2,7 @@ M = 10;
 psize = 30;
 d = 3;
 x = randn(d,psize);
-eps = 1E-8;
+eps = 0.1;
 nstep = 20;
 stepsize = 0.05;
 T = zeros(d,M);
@@ -28,24 +28,25 @@ for l=1:nstep
     
     %Start IRLS
     [G,Linv,B] = LSSDP(patch,weight,d);
-    niter = 30;
-    err = zeros(niter,2);
     
     [weight, patch,Tst] = updateweight(patch,Linv,B,M,d,eps,weight,G);
-    err(1,1) = norm(G-repmat(eye(d),M,M),'fro');
-    err(1,2) = norm(T-Tst,'fro');
     
+    niter = 30;
     oldG = zeros(size(G));
+    err = zeros(niter,3);
     for k=1:niter
+        err(k,1) = (l-1)*stepsize;
+        err(k,2) = norm(G-repmat(eye(d),M,M),'fro');
+        err(k,3) = norm(T-Tst,'fro');
         if norm(oldG-G,'fro')<10^-5
             break
         end
-        oldG       = G;
-        [G,Linv,B] = LSSDP(patch,weight,d);
         [weight,patch,Tst]     = updateweight(patch,Linv,B,M,d,eps,weight,G);
         eps = eps/3;
-        err(k+1,1) = norm(G-repmat(eye(d),M,M),'fro');
-        err(k+1,2) = norm(T-Tst,'fro');
+        oldG       = G;
+        [G,Linv,B] = LSSDP(patch,weight,d);
     end
-Err{l}=err;
+    err(l,1) = (l-1)*stepsize;
+    err(l,2) = norm(G-repmat(eye(d),M,M),'fro')
+    err(l,3) = norm(T-Tst,'fro')
 end

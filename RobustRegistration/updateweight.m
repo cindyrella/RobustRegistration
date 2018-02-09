@@ -1,4 +1,4 @@
-function [weight,patch] = updateweight(patch,Linv,B,M,d,eps,weight,G)
+function [weight,patch,T] = updateweight(patch,Linv,B,M,d,eps,weight,G)
 
 [U,sigma] = eigs(G,d);
 O         = U*sqrt(sigma);

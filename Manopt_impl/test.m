@@ -1,17 +1,18 @@
 clear all
+rng(1,'twister');
 %% Define different sources of error
 m = 10;
 psize = 30;
 dreal = 3;
-dlift = 6;
+dlift = dreal*1;
 x = randn(dreal,psize);
-eps = 1E-8;
+%eps = 1E-8;
 nstep = 20;
 stepsize = 0.05;
 T = zeros(dreal,m);
 
 %iterate over different noise level
-Err = cell(1,nstep);
+err = zeros(nstep,4);
 for l=1:nstep
     %% Simulate patches 
     for i=1:m
@@ -29,27 +30,14 @@ for l=1:nstep
     
 %% Find the LS solution
     [G,Linv,B] = LSSDP(patch,weight,dreal);
-    [Tst,R] = find_solution_LS(Linv,B,dlift,G);
+    [Tst,Rst] = find_solution_LS(Linv,B,dlift,G);
     niter = 30;
-    err(1,1) = norm(R*R'-repmat(eye(dreal),m,m),'fro');
-    err(1,2) = norm([T;zeros(dlift-dreal,m-1)]-Tst,'fro');
+    err(l,1) = norm(Rst*Rst'-repmat(eye(dreal),m,m),'fro');
+    err(l,2) = norm([T;zeros(dlift-dreal,m-1)]-Tst,'fro');
     
 %% Solve the Riemannian problem
+[Rst,Tst] = solve_opt_man(patch,dreal,dlift,Rst);
 
-% Create manifold
-manifold = stiefelstackedfactory(m, dreal, dlift);
-problem.M = manifold;
-
-% Define the problem cost function and its Euclidean gradient.
-problem.cost  = @(R,store) cost_function(R,patch,dreal,store);
-problem.egrad = @(R,store) euc_grad(R,patch,dreal,store);
-
-% Solve.
-[x, xcost, info, options] = trustregions(problem,R);
- 
-% Display some statistics.
-figure;
-semilogy([info.iter], [info.gradnorm], '.-');
-xlabel('Iteration number');
-ylabel('Norm of the gradient of f');
+err(l,3) = norm(Rst*Rst'-repmat(eye(dreal),m,m),'fro');
+err(l,4) = norm(T-Tst,'fro');
 end

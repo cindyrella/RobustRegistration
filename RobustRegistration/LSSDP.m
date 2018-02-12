@@ -34,5 +34,7 @@ cvx_begin sdp
     for i=1:M
         G((i-1)*d+1:i*d,(i-1)*d+1:i*d) == eye(d);
     end
+    
 cvx_end
+end
 

@@ -1,8 +1,7 @@
 function [Tst,R] = find_solution_LS(Linv,B,d,G)
 [U,sigma] = eigs(G,d);
 O         = U*sqrt(sigma);
-O         = O';
-[~,O]     = qr(O);
+[~,O]     = qr(O');
  O        = diag(sign(diag(O)))* O;
 T         = -O*B*Linv;
 

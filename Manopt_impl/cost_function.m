@@ -8,20 +8,12 @@ function [cost,store] = cost_function(R,patch,d,store)
 
 %we will reuse L,Lx to create t, if there are not L,Lx then we will take w
 %= 1
+tol = 1E-16;
+if(~isfield(store, 'Lx'))||(~isfield(store, 'Linv'))||(~isfield(store, 'T'))||(~isfield(store, 'cost'))
+
 m = numel(patch);
 
-% Look for L, Lx
-if (~isfield(store.shared, 'Lx')) || (~isfield(store.shared, 'Linv'))
-    [Linvt,Lxt] = create_L(patch,d);
-    store.share.Linv = Linvt;
-    store.share.Lx = Lxt;
-end
-Lx = store.share.Lx;
-Linv = store.share.Linv;
-
-%Compute t 
-T = -R'*Lx*Linv;
-store.share.T = T;
+T = find_best_T(R,patch,d);
 
 
 %Compute cost, Lx, L
@@ -38,15 +30,15 @@ for i=1:m
         idxj = patch(j).idx;
         xj   = patch(j).coord;
         [~,intidxi,intidxj] = intersect(idxi,idxj);
-        Rj = R((d*i-2):(d*i),:)';
+        Rj = R((d*j-2):(d*j),:)';
         tj = T(:,j);
         w = zeros(1,numel(intidxi));
         for k = 1:numel(intidxi)
             xik = xi(:,intidxi(k));
             xjk = xj(:,intidxj(k));
-            w(k) = norm(Ri * xik + ti - Rj * xjk - tj,2);
+            w(k) = norm(Ri * xik + ti - Rj * xjk - tj+tol,2);
         end
-        cost = sum(w);
+        cost = cost + sum(w);
         rec_w = 1./w;
         rec_cost = sum(rec_w);
         
@@ -62,14 +54,17 @@ for i=1:m
         Lx((d*(i-1)+1):(d*i),i) = Lx((d*(i-1)+1):(d*i),i) + Sxi;
         Lx((d*(i-1)+1):(d*i),j) = Lx((d*(i-1)+1):(d*i),j) - Sxi;
         
-        Lx((d*(j-1)+1):(d*j),i) = Lx((d*(j-1)+1):(d*j),i) + Sxj;
-        Lx((d*(j-1)+1):(d*j),j) = Lx((d*(j-1)+1):(d*j),j) - Sxj;
+        Lx((d*(j-1)+1):(d*j),i) = Lx((d*(j-1)+1):(d*j),i) - Sxj;
+        Lx((d*(j-1)+1):(d*j),j) = Lx((d*(j-1)+1):(d*j),j) + Sxj;
         
     end 
 end
-
 Linv = pinv(L);
-store.share.Linv = Linv;
-store.share.Lx = Lx;
+store.Linv = Linv;
+store.Lx = Lx;
+store.cost = cost;
+store.T = T;
+end
+cost = store.cost;
 
 end

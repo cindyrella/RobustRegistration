@@ -18,7 +18,6 @@ Rop = zeros(dreal,dreal * m);
 Top = zeros(dreal,m);
 for i=1:m
     t                 = 1*randn(dreal,1)*ones(1,psize); 
-    patch_op(i).idx   = 1:psize;
     while true
         [Q,~] = qr(randn(dreal));
         if (det(Q))>tol
@@ -34,15 +33,17 @@ for i=1:m
         weight(i,j).w = ones(1,psize);
     end
     Top(:,i)= t(:,1);
-    Rop(:,(dreal*(i-1)):(dreal*i)) = Q;
+    Rop(:,(dreal*(i-1)+1):(dreal*i)) = Q;
 end
-Top = Top(:,2:end) - Top(:,1);
+Top = Rop(:,1:dreal)'*(Top(:,2:end) - Top(:,1));
 Gop = Rop'*Rop;
+
 %% Iterate over different noise level
 err = zeros(nstep,4);
 for l=1:nstep
     %% Polute patches 
     for i = 1:m
+        patch(i).idx   = 1:psize;
         x              = patch_op(i).coord;
         noise          = ones(dreal,1)*binornd(1,stepsize*(l-1),1,psize);
         noise          = 1*randn(dreal,psize).*noise;

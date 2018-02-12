@@ -1,4 +1,4 @@
-function [eR,eT] = solve_opt_man(patch,dreal,dlift,R0,T,iter)
+function [eR,eT] = solve_opt_man(patch,dreal,dlift,R0,Gop,Top,iter)
 m = numel(patch);
 %% Create Manifold
 manifold = stiefelstackedfactory(m, dreal, dlift);
@@ -12,7 +12,7 @@ problem.ehess = @(R,eta,store) euc_hess(R,eta,patch,dreal,store);
 options.maxiter = iter;
 options.debug = 0;
 options.Delta_bar = 0.1;
-options.statsfun = @(problem, Rlift, stats) mystatsfun(problem, Rlift,patch,dreal,T, stats);
+options.statsfun = @(problem, Rlift, stats) mystatsfun(problem, Rlift,patch,dreal,Gop,Top, stats);
 
 [~, ~, info, ~] = trustregions(problem,R0,options);
 

@@ -1,4 +1,4 @@
-function stats = mystatsfun(problem, Rlift,patch,dreal,T,stats)
+function stats = mystatsfun(problem, Rlift,patch,dreal,Gop,Top, stats)
 %% Get projection of lift
 [U,sigma] = eigs(Rlift*Rlift',dreal);
 O         = U*sqrt(sigma);
@@ -7,9 +7,8 @@ O         = U*sqrt(sigma);
  Rst = O';
 %% Get best T
 Tst = find_best_T(Rst,patch,dreal);
-Tst = -1*(Tst(:,2:end)-Tst(:,1));
+Tst = Tst(:,2:end) - Tst(:,1);
 %% Compute error
-m = numel(patch);
-stats.myeR = norm(Rst*Rst'-repmat(eye(dreal),m,m),'fro');
-stats.myeT = norm(T-Tst,'fro');
+stats.myeR = norm(Rst*Rst'-Gop,'fro');
+stats.myeT = norm(Top-Tst,'fro');
 end

@@ -6,6 +6,6 @@ O         = U*sqrt(sigma);
 T         = -O*B*Linv;
 
 
-Tst = -1*(T(:,2:end)-T(:,1));
+Tst = T(:,2:end) - T(:,1);
 R = O';
 end

@@ -23,7 +23,7 @@ for l=1:nstep
         end
         T(:,i)= t(:,1);
     end
-    
+    T = T(:,2:end)-T(:,1);
     
     
     %Start IRLS

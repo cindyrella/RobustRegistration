@@ -1,17 +1,18 @@
 clear all
-rng(1,'twister');
-%% Define different sources of error
+rng(2,'twister');
+%% Define problem parameters
 m = 10;
 psize = 30;
 dreal = 3;
-dlift = dreal*1;
 x = randn(dreal,psize);
 %eps = 1E-8;
 nstep = 20;
 stepsize = 0.05;
 T = zeros(dreal,m);
+iter_opt = 200;
+cmap = jet(m);
 
-%iterate over different noise level
+%% Iterate over different noise level
 err = zeros(nstep,4);
 for l=1:nstep
     %% Simulate patches 
@@ -30,14 +31,37 @@ for l=1:nstep
     
 %% Find the LS solution
     [G,Linv,B] = LSSDP(patch,weight,dreal);
-    [Tst,Rst] = find_solution_LS(Linv,B,dlift,G);
-    niter = 30;
-    err(l,1) = norm(Rst*Rst'-repmat(eye(dreal),m,m),'fro');
-    err(l,2) = norm([T;zeros(dlift-dreal,m-1)]-Tst,'fro');
     
-%% Solve the Riemannian problem
-[Rst,Tst] = solve_opt_man(patch,dreal,dlift,Rst);
-
-err(l,3) = norm(Rst*Rst'-repmat(eye(dreal),m,m),'fro');
-err(l,4) = norm(T-Tst,'fro');
+%% Iterate over different liftings
+    ET = zeros(iter_opt+1,m);
+    figure()
+    for kappa = 1:m
+        dlift = dreal*kappa;
+        [~,R0] = find_solution_LS(Linv,B,dlift,G);
+        
+        %% Solve the Riemannian problem
+        [eR,eT] = solve_opt_man(patch,dreal,dlift,R0,T,iter_opt);
+        semilogy(eR,'DisplayName',strcat('dl =',num2str(dlift)),'Color',cmap(kappa,:));
+        hold on;
+        ET(:,kappa) = eT';
+    end
+    xlabel('Iter');
+    ylabel('||RR^t-R_{op}R_{op}^t||_F');
+    legend('show');
+    title(strcat('Error in R with corruption of ',num2str(100*stepsize*(l-1)),'%'));
+    saveas(gcf,strcat('eR',num2str(l),'.png'));
+    hold off
+    figure()
+    for kappa = 1:m
+        dlift = dreal*kappa;
+        semilogy(ET(:,kappa),'DisplayName',strcat('dl =',num2str(dlift)),'Color',cmap(kappa,:));
+        hold on;
+    end
+    xlabel('Iter');
+    ylabel('||T-T_{op}||_F');
+    legend('show');
+    title(strcat('Error in T with corruption of ',num2str(100*stepsize*(l-1)),'%'));
+    saveas(gcf,strcat('eT',num2str(l),'.png'));
+    hold off
+    close all
 end

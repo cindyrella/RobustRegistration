@@ -84,7 +84,7 @@ for corr = 1:ncorr
         semilogy(eR,'DisplayName','ILS');
         xlabel('Iter');
         ylabel('||RR^t-R_{op}R_{op}^t||_F');
-        axis([ 0 35 1E-9 10]);
+        axis([ 0 35  1E-inf])
         legend('show');
         title(strcat('R Error, corruption = ',num2str(100*stepsize*(l-1)),'%, correspondance = ',num2str(100*(1-corrsize*(corr-1))),'%'));
         saveas(gcf,strcat('eR',num2str(l),'_',num2str(corr),'.png'));
@@ -94,7 +94,6 @@ for corr = 1:ncorr
         xlabel('Iter');
         ylabel('||T-T_{op}||_F');
         legend('show');
-        axis([ 0 35 1E-9 10]);
         title(strcat('T Error, corruption = ',num2str(100*stepsize*(l-1)),'%, correspondance = ',num2str(100*(1-corrsize*(corr-1))),'%'));
         saveas(gcf,strcat('eT',num2str(l),'_',num2str(corr),'.png'));
         hold off

@@ -44,7 +44,7 @@ Gop = Rop'*Rop;
 %% Iterate over different correspondences
 for corr = 1:ncorr 
     for i = 1:m
-        patch_opt(i).idx   = nonzeros((1:psize).*binornd(1,1-corrsize*(corr-1),1,psize));
+        patch_op(i).idx   = nonzeros((1:psize).*binornd(1,1-corrsize*(corr-1),1,psize));
     end
 
     %% Iterate over different noise level
@@ -52,9 +52,9 @@ for corr = 1:ncorr
     for l=1:nstep
         %% Polute patches 
         for i = 1:m
-            patch(i).idx   = patch_opt(i).idx;
-            x              = patch_op(i).coord(:,patch_opt(i).idx);
-            xsize          = numel(patch_opt(i).idx); 
+            patch(i).idx   = patch_op(i).idx;
+            x              = patch_op(i).coord(:,patch_op(i).idx);
+            xsize          = numel(patch_op(i).idx); 
             noise          = ones(dreal,1)*binornd(1,stepsize*(l-1),1,xsize);
             noise          = 1*randn(dreal,xsize).*noise;
             patch(i).coord = x + noise;

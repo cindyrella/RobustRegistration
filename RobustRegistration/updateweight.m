@@ -1,10 +1,10 @@
-function [weight,patch,Tst] = updateweight(patch,Linv,B,M,d,eps,weight,G)
+function [weight,patch,Tst,Gst] = updateweight(patch,Linv,B,M,d,eps,weight0,G)
 
 [U,sigma] = eigs(G,d);
 O         = U*sqrt(sigma);
 O         = O';
 [~,O]     = qr(O);
- O = diag(sign(diag(O)))* O;
+ O        = diag(sign(diag(O)))* O;
 T         = -O*B*Linv;
 
 
@@ -18,7 +18,7 @@ for i=1:M
         idxj = patch(j).idx;
         xj   = patch(j).coord;
         [~,intidxi,intidxj] = intersect(idxi,idxj);
-        w = weight(i,j).w;
+        w = weight0(i,j).w;
         for k=1:numel(intidxi)
             w(k) = 1/sqrt(norm(O(:,(i-1)*d+1:i*d)*xi(:,intidxi(k))-O(:,(j-1)*d+1:j*d)*xj(:,intidxj(k))+T(:,i)-T(:,j))^2+eps);
         end
@@ -35,7 +35,8 @@ for i=1:M
         weight(i,j).w = const*weight(i,j).w/norm_const;
     end
 end
-Tst = -1*(T(:,2:end)-T(:,1));
+Tst = (T(:,2:end)-T(:,1));
+Gst = O'*O;
 end
 
 % %shift

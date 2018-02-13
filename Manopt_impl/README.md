@@ -25,7 +25,7 @@ n\c| 100 | 90 | 80 | 70
 70|![](Fig_err/eR15_1.png) | ![](Fig_err/eR15_2.png) |![](Fig_err/eR15_3.png) | ![](Fig_err/eR15_4.png)
 
 
-noise| 70 | 60 | 50 | 40  
+n\c| 70 | 60 | 50 | 40  
 :---:|:---:|:---:|:---:|:---:
 0|![](Fig_err/eR1_4.png) | ![](Fig_err/eR1_5.png) |![](Fig_err/eR1_6.png) | ![](Fig_err/eR1_7.png)
 5|![](Fig_err/eR2_4.png) | ![](Fig_err/eR2_5.png) |![](Fig_err/eR2_6.png) | ![](Fig_err/eR2_7.png)
@@ -40,5 +40,5 @@ noise| 70 | 60 | 50 | 40
 50|![](Fig_err/eR11_4.png) | ![](Fig_err/eR11_5.png) |![](Fig_err/eR11_6.png) | ![](Fig_err/eR11_7.png)
 55|![](Fig_err/eR12_4.png) | ![](Fig_err/eR12_5.png) |![](Fig_err/eR12_6.png) | ![](Fig_err/eR12_7.png)
 60|![](Fig_err/eR13_4.png) | ![](Fig_err/eR13_5.png) |![](Fig_err/eR13_6.png) | ![](Fig_err/eR13_7.png)
-65|![](Fig_err/eR14_4.png) | ![](Fig_err/eR14_5.png) |![](Fig_err/eR14_6.png) | ![](Fig_err/eR14_7.png)
+65|![](Fig_err/eR14_4.png) | ![](Fig_err/eR14_5.png) |![](Fig_err/eR14_6.png) | 
 70|![](Fig_err/eR15_4.png) | ![](Fig_err/eR15_5.png) |![](Fig_err/eR15_6.png) | 

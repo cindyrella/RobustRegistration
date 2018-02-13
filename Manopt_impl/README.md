@@ -1,3 +1,5 @@
 # Error according to correspondance and noise
 
-![alt text](Fig_err/eR1_1.png) | ![alt text](Fig_err/eR1_1.png)
+ 100 | 90
+:---:|:---:
+![](Fig_err/eR1_1.png) | ![](Fig_err/eR1_2.png)

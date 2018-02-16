@@ -24,7 +24,6 @@ n\c| 100 | 90 | 80 | 70
 55|![](Fig_err_O3/eR12_1.png) | ![](Fig_err_O3/eR12_2.png) |![](Fig_err_O3/eR12_3.png) | ![](Fig_err_O3/eR12_4.png)
 60|![](Fig_err_O3/eR13_1.png) | ![](Fig_err_O3/eR13_2.png) |![](Fig_err_O3/eR13_3.png) | ![](Fig_err_O3/eR13_4.png)
 65|![](Fig_err_O3/eR14_1.png) | ![](Fig_err_O3/eR14_2.png) |![](Fig_err_O3/eR14_3.png) | ![](Fig_err_O3/eR14_4.png)
-70|![](Fig_err_O3/eR15_1.png) | ![](Fig_err_O3/eR15_2.png) |![](Fig_err_O3/eR15_3.png) | ![](Fig_err_O3/eR15_4.png)
 
 
 n\c| 70 | 60 | 50 | 40  
@@ -42,5 +41,5 @@ n\c| 70 | 60 | 50 | 40
 50|![](Fig_err_O3/eR11_4.png) | ![](Fig_err_O3/eR11_5.png) |![](Fig_err_O3/eR11_6.png) | ![](Fig_err_O3/eR11_7.png)
 55|![](Fig_err_O3/eR12_4.png) | ![](Fig_err_O3/eR12_5.png) |![](Fig_err_O3/eR12_6.png) | ![](Fig_err_O3/eR12_7.png)
 60|![](Fig_err_O3/eR13_4.png) | ![](Fig_err_O3/eR13_5.png) |![](Fig_err_O3/eR13_6.png) | ![](Fig_err_O3/eR13_7.png)
-65|![](Fig_err_O3/eR14_4.png) | ![](Fig_err_O3/eR14_5.png) |![](Fig_err_O3/eR14_6.png) | 
-70|![](Fig_err_O3/eR15_4.png) | ![](Fig_err_O3/eR15_5.png) |![](Fig_err_O3/eR15_6.png) | 
+65|![](Fig_err_O3/eR14_4.png) | ![](Fig_err_O3/eR14_5.png) |![](Fig_err_O3/eR14_6.png) | ![](Fig_err_O3/eR14_7.png)
+

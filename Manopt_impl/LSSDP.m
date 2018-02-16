@@ -1,4 +1,4 @@
-function [G,Linv,B] = LSSDP(patch,weight,d)
+function [G,Linv,B,myiter] = LSSDP(patch,weight,d)
 
 M = numel(patch);
 %Construct B
@@ -35,4 +35,5 @@ cvx_begin sdp
         G((i-1)*d+1:i*d,(i-1)*d+1:i*d) == eye(d);
     end
 cvx_end
-
+myiter = cvx_slvitr;
+end

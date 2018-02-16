@@ -12,8 +12,7 @@ stepsize = 0.05;
 ncorr = 7;
 corrsize = 0.1;
 
-niter = 30;
-tol2 = 1E-8;
+iter_opt = 200;
 cmap = jet(m);
 
 %% Create patches
@@ -22,13 +21,15 @@ Rop = zeros(dreal,dreal * m);
 Top = zeros(dreal,m);
 for i=1:m
     t   = 1*randn(dreal,1)*ones(1,psize); 
+    %Get random sign of rotation
+    orientation = 2*(randi(2)-1.5);
     while true
         [Q,~] = qr(randn(dreal));
-        if (det(Q))>tol
+        if abs(det(Q))>tol
             break;
         end
     end
-    if (det(Q)+1)<tol
+    if abs(det(Q)+orientation)<tol
         Q(:,1) = -1*Q(:,1);
     end
         
@@ -56,41 +57,79 @@ for corr = 1:ncorr
             patch(i).idx   = patch_op(i).idx;
             x              = patch_op(i).coord(:,patch_op(i).idx);
             xsize          = numel(patch_op(i).idx); 
-            noise          = ones(dreal,1)*binornd(1,stepsize*(l-1),1,xsize);
+            noise          = ones(dreal,1)*binornd(1,stepsize*(l+1),1,xsize);
             noise          = 1*randn(dreal,xsize).*noise;
             patch(i).coord = x + noise;
         end
 
     %% Find the LS solution
-        [G,Linv,B] = LSSDP(patch,weight0,dreal);
+        [G,Linv,B] = LSSDP(patch,weight,dreal);
 
-    %% Iterate multiple times
-    
+    %% Iterate over different liftings
+        ET = zeros(iter_opt+1,m+1);
+        figure()
+        %% No lifting
+        [~,R0] = find_solution_LS(Linv,B,dlift,G);
+
+        % Solve the Riemannian problem
+        [eR,eT] = solve_opt_man(patch,dreal,dreal,R0,Gop,Top,iter_opt);
+        semilogy(eR,'DisplayName',strcat('No lifting'),'Color','k');
+        hold on;
+        ET(1:numel(eT),1) = eT';
+        
+        %% Lifting
+        
+        for kappa = 2:m
+            dlift = dreal*kappa;
+            [~,R0] = find_solution_LS(Linv,B,dlift,G);
+
+            % Solve the Riemannian problem
+            [eR,eT] = solve_opt_man(patch,dreal,dlift,R0,Gop,Top,iter_opt);
+            semilogy(eR,'DisplayName',strcat('dl =',num2str(dlift)),'Color',cmap(kappa,:));
+            ET(:,kappa) = eT';
+        end
+        
+        %% ILS
         eR = zeros(niter+1,1);
         eT = zeros(niter+1,1);
+        ILS_iter = zeros(niter+1,1);
+        
         [weight, patch,Tst,Gst] = updateweight(patch,Linv,B,m,dreal,eps,weight0,G);
         eR(1) = norm(Gst-Gop,'fro');
         eT(1) = norm(Tst-Top,'fro');
-    
+        ILS_iter(1) = myiter;
+        
         tol3 = tol2;
         for k = 1:niter
-            [G,Linv,B] = LSSDP(patch,weight,dreal);
+            [G,Linv,B,myiter] = LSSDP(patch,weight,dreal);
             [weight,patch,Tst,Gst]     = updateweight(patch,Linv,B,m,dreal,tol3,weight,G);
-            tol3 = min(tol3/3,1E-16);
+            tol3 = max(tol3/3,1E-16);
             eR(k+1) = norm(Gst-Gop,'fro');
             eT(k+1) = norm(Tst-Top,'fro');
+            ILS_iter(k+1) = myiter;
         end
-        figure()
-        semilogy(eR,'DisplayName','ILS');
+        semilogy(ILS_iter,eR,'DisplayName','ILS','Color','k','LineStyle','--');
+        ET(1:numel(eT),m+1) = eT;
+        %% Plot error in R
         xlabel('Iter');
         ylabel('||RR^t-R_{op}R_{op}^t||_F');
-        axis([ 0 35  1E-inf])
+        axis([ 0 inf 1E-9 10]);
         legend('show');
         title(strcat('R Error, corruption = ',num2str(100*stepsize*(l-1)),'%, correspondance = ',num2str(100*(1-corrsize*(corr-1))),'%'));
         saveas(gcf,strcat('eR',num2str(l),'_',num2str(corr),'.png'));
         hold off
+        %% Plot error in T
         figure()
-        semilogy(eT,'DisplayName','ILS');
+        semilogy(ET(:,1),'DisplayName',strcat('No lifting'),'Color','k');
+
+        for kappa = 2:m
+            dlift = dreal*kappa;
+            semilogy(ET(:,kappa),'DisplayName',strcat('dl =',num2str(dlift)),'Color',cmap(kappa,:));
+            hold on;
+        end
+        
+        semilogy(ILS_iter,ET(:,1:niter),'DisplayName','ILS','Color','k','LineStyle','--');
+        
         xlabel('Iter');
         ylabel('||T-T_{op}||_F');
         legend('show');
